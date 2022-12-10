@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+  <title>OpenAI Storybook</title>
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='storybook.png') }}"
+  />
+  <link rel="stylesheet" href="{{ url_for('static', filename='story.css') }}" />
+</head>
+
+<body>
+
+  <div class="storybook">
+    <div class="storybook-header">
+      <h1>{{story.title}}</h1>
+      <div class="story-nav">
+        {%if pagenum > 0%}
+        <a href="{{ url_for('storypage', pagenum=pagenum-1) }}"><img class="story-nav-img" src="{{ url_for('static', filename='previous.png') }}"></a>
+        {%endif%}
+        {%if pagenum < story.pages|length-1%}
+        <a href="{{ url_for('storypage', pagenum=pagenum+1) }}"><img class="story-nav-img" src="{{ url_for('static', filename='next.png') }}"></a>
+        {%endif%}
+      </div>  
+    </div>
+    <div class="page">
+      <div class="story-text">
+        <p>{{story.pages[pagenum].text}}</p>
+      </div>
+      <div class="illustration">
+        <img src="{{ url_for('static', filename=story.pages[pagenum].illustration) }}" alt="Illustration">
+      </div>
+    </div>
+    <div class="storybook-footer">
+      <a href="{{ url_for('index') }}" class="storybook-footer-text">New Story</a>
+    </div>
+  </div>
+
+</body>

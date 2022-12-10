@@ -1,3 +1,16 @@
+/* .storybook-layout {
+  display: flex;
+  justify-content: space-between;
+}
+
+.storybook-text {
+  width: 45%;
+}
+
+.storybook-illustration {
+  width: 45%;
+} */
+
 @font-face {
   font-family: "ColfaxAI";
   src: url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff2)

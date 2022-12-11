@@ -10,9 +10,58 @@
 
 <body>
   <img src="{{ url_for('static', filename='storybook.png') }}" class="icon" />
-  <h3>GPT Storybook</h3>
-  <form action="/story" method="post">
-    <!-- <input type="text" name="animal" placeholder="Enter an animal" required /> -->
-    <input type="submit" value="Generate" />
-  </form>
+  
+  <h2>Storybook Generator</h2>
+
+  <div style="width: 420px;">
+  
+    {%if errs%}
+    <div class="error-list">
+      <ul>
+        {%for err in errs%}
+        <li class="error-text">{{err}}</li>
+        {%endfor%}
+      </ul>
+    </div>
+    {%endif%}
+  
+    <form action="/story" method="post">
+      <h3>My story...</h3>
+
+      <!-- animals -->
+      <p>... has these animals:</p>
+      <fieldset id="animals">
+        {%for i in range(0, animals|length)%}
+        <div>
+          <input type="checkbox" name="animal" value="{{animals[i]}}" {%if animals[i] in params.animals%}checked{%endif%}>
+          <label for="animal{{i}}"> {{animals[i]}}</label><br>
+        </div>
+        {%endfor%}
+      </fieldset>
+
+      <!-- situations -->
+      <p>... in this situation:</p>
+      <fieldset id="situation">
+        {%for i in range(0, situations|length)%}
+        <div class="radio-option">
+          <input type="radio" id="situation{{i}}" name="situation" value="{{situations[i]}}" {%if situations[i] == params.situation%}checked{%endif%}>
+          <label for="situation{{i}}">{{situations[i]}}</label><br>
+        </div>
+        {%endfor%}
+      </fieldset>
+
+      <!-- genre -->
+      <p>... and falls into this genre:</p>
+      <fieldset id="genre">
+        {%for i in range(0, genres|length)%}
+        <div>
+          <input type="radio" id="genre{{i}}" name="genre" value="{{genres[i]}}" {%if genres[i] == params.genre%}checked{%endif%}>
+          <label for="genre{{i}}"> {{genres[i]}}</label><br>
+        </div>
+        {%endfor%}
+      </fieldset>
+
+      <input type="submit" value="Generate" />
+    </form>
+  </div>
 </body>

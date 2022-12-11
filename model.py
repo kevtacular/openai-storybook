@@ -1,3 +1,13 @@
+class StoryGenerationParams:
+    animals = []
+    situation = ''
+    genre = ''
+
+    def __init__(self, animals=[], situation='', genre='') -> None:
+        self.animals = animals
+        self.situation = situation
+        self.genre = genre
+
 class Page:
     text = ''
     illustration = ''
@@ -5,7 +15,6 @@ class Page:
     def __init__(self, text, illustration) -> None:
         self.text = text
         self.illustration = illustration
-
 
 class Story:
     title = ''

@@ -36,7 +36,7 @@ app.secret_key = str(uuid.uuid4())
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-@app.route("/", methods=("GET", "POST"))
+@app.route("/", methods=["GET", "POST"])
 def index():
     errors=[]
     if 'errs' in request.args:
@@ -53,30 +53,8 @@ def index():
         errs=errors)
 
 
-@app.route("/story", methods=("GET", "POST"))
+@app.route("/story", methods=["GET"])
 def storypage():
-    if request.method == "POST":
-        story_params, errors = get_story_gen_params()
-        session['story_params'] = to_json(story_params)
-        if len(errors) > 0:
-            return redirect(url_for("index", errs=errors))
-
-        print(f'animals={story_params.animals}; '
-            f'situation={story_params.situation}; '
-            f'genre={story_params.genre}')
-
-        # response = openai.Completion.create(
-        #     model="text-davinci-002",
-        #     prompt=generate_prompt(animal),
-        #     temperature=0.6,
-        # )
-
-        session['story'] = to_json(story)
-        # print(json.dumps(story.__dict__, default=lambda o: o.__dict__, indent=True))
-
-        return redirect(url_for("storypage", pagenum=0))
-        # return redirect(url_for("index", pagenum=0))
-
     try:
         pagenum_arg = int(request.args.get("pagenum"))
         pagenum = pagenum_arg if pagenum_arg in range(0, len(story.pages)) else 0
@@ -88,6 +66,29 @@ def storypage():
         story_to_render.__dict__ = json.loads(session['story'])
 
     return render_template("story.html", story=story_to_render, pagenum=pagenum)
+
+
+@app.route("/story", methods=["POST"])
+def post_storypage():
+    story_params, errors = get_story_gen_params()
+    session['story_params'] = to_json(story_params)
+    if len(errors) > 0:
+        return redirect(url_for("index", errs=errors))
+
+    print(f'animals={story_params.animals}; '
+        f'situation={story_params.situation}; '
+        f'genre={story_params.genre}')
+
+    # response = openai.Completion.create(
+    #     model="text-davinci-002",
+    #     prompt=generate_prompt(animal),
+    #     temperature=0.6,
+    # )
+
+    session['story'] = to_json(story)
+    # print(json.dumps(story.__dict__, default=lambda o: o.__dict__, indent=True))
+
+    return redirect(url_for("storypage", pagenum=0))
 
 
 def get_story_gen_params():

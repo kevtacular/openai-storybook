@@ -71,7 +71,7 @@ def storypage():
         #     temperature=0.6,
         # )
 
-        session['story'] = json.dumps(story.__dict__, default=lambda o: o.__dict__,)
+        session['story'] = to_json(story)
         # print(json.dumps(story.__dict__, default=lambda o: o.__dict__, indent=True))
 
         return redirect(url_for("storypage", pagenum=0))

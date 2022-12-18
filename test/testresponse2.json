@@ -1,0 +1,29 @@
+{
+    "_response_ms": 5324,
+    "_retrieve_params": {},
+    "api_key": "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",
+    "api_version": null,
+    "api_type": null,
+    "organization": "user-okn85gvi1qpb1tg0hkla4fyg",
+    "api_base_override": null,
+    "engine": null,
+    "_previous": {
+     "id": "cmpl-6OrdmdsenE9v3KvY3rHMExK7xfG4J",
+     "object": "text_completion",
+     "created": 1671384086,
+     "model": "text-davinci-003",
+     "choices": [
+      {
+       "text": "\nOnce upon a Time - A Horse's Tale\n\nPage 1\nOnce upon a time, in a faraway land, there lived a horse named Wilbur. Wilbur was a gentle, kind-hearted horse, who loved to sing and dance. \n\nOne day, Wilbur heard about a grand singing and dancing competition for animals that was being held in the nearby kingdom. Wilbur was determined to compete and win the grand prize. \n\nPage 2\nSo Wilbur packed his bags and set off on his journey to the kingdom. He was determined to show the judges his best moves and win the competition. \n\nAlong the way, Wilbur met many other animals who were also competing in the competition. He met a bear, a deer, a fox, and many other animals who were all excited to show off their talents. \n\nPage 3\nWhen Wilbur arrived at the kingdom, he was amazed at the grandeur of the castle, and the size of the crowd that had gathered to watch the competition. \n\nWilbur was a little nervous but he took a deep breath and stepped onto the stage. He sang his heart out and performed his best dance moves. The crowd erupted in cheers, and Wilbur won the competition! \n\nPage 4\nWilbur was overjoyed to have won the competition, and he returned home with a heart full of joy and pride. He had achieved his dream of becoming the most talented horse in the land, and he was determined to keep on singing and dancing for the rest of his life. \n\nThe End",
+       "index": 0,
+       "logprobs": null,
+       "finish_reason": "stop"
+      }
+     ],
+     "usage": {
+      "prompt_tokens": 75,
+      "completion_tokens": 327,
+      "total_tokens": 402
+     }
+    }
+   }

@@ -12,7 +12,16 @@ _ENABLE_AI = (os.getenv('STORY_ENABLE_AI', 'False') == 'True')
 
 _OPENAI_MODEL = 'text-davinci-003'
 _OPENAI_TEMP = 0.6
+_TEST_RESPONSE_FILE = 'test/testresponse2.json'
+_STORY_TEXT_PROMPT = """Generate a childrens story involving these animals: {}. 
 
+The animals are {}. The story should be written in the genre of "{}".
+
+Generate a title on the first line (with no other text) and divide the story
+into multiple pages, each with a header of the form "Page N".
+"""
+
+# Set the key used to access the Open AI API
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
@@ -27,7 +36,7 @@ class StoryService:
     """
     Generate a new story from the given parameters.
     """
-    def generate_story(self, story_params, temperature=_OPENAI_TEMP) -> Story:
+    def generate_story(self, story_params: StoryGenerationParams, temperature: float = _OPENAI_TEMP) -> Story:
         story_prompt = self._generate_prompt(story_params)
         print('PROMPT')
         print(story_prompt)
@@ -43,29 +52,23 @@ class StoryService:
             print(to_json(response))
             story_text = response.choices[0].text
         else:
-            story_text = self._load_story_text('test/testresponse.json')
+            story_text = self._load_story_text(_TEST_RESPONSE_FILE)
 
         print("STORY TEXT")
         print(story_text)
 
-        return self._parse_story(story_text)
+        title, pages = self._parse_story(story_text)
+        return Story(title, pages)
 
     """
     Generate an Open AI prompt to generate a new story.
     """
-    def _generate_prompt(self, story_params: StoryGenerationParams):  # """.format(", ".join(story_params.animals))
-        return """Generate a childrens story involving these animals: {}. 
-
-The animals are {}. The story should be written in the genre of "{}".
-
-Generate a title on the first line (with no other text) and divide the story
-into multiple pages, each with a header of the form "Page N".
-
-""".format(
-        ", ".join(story_params.animals),
-        story_params.situation,
-        story_params.genre
-    )
+    def _generate_prompt(self, story_params: StoryGenerationParams):
+        return _STORY_TEXT_PROMPT.format(
+            ", ".join(story_params.animals),
+            story_params.situation,
+            story_params.genre
+        )
 
     """
     Used during development only!
@@ -79,7 +82,7 @@ into multiple pages, each with a header of the form "Page N".
     """
     Parse a Completion response into a Story.
     """
-    def _parse_story(self, story_text) -> Story:
+    def _parse_story(self, story_text):
         story_lines = story_text.splitlines()
 
         title = ''
@@ -97,4 +100,4 @@ into multiple pages, each with a header of the form "Page N".
             elif page:
                 page.text = page.text + story_lines[i] + '\n'
 
-        return Story(title, pages)
+        return (title, pages)

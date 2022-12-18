@@ -4,36 +4,20 @@ import json
 import openai
 import uuid
 from flask import Flask, redirect, render_template, request, session, url_for
-from model import StoryGenerationParams, Story, Page
+from model import animals, situations, genres, StoryGenerationParams, Story
 
-animals = ['Horse', 'Hippo', 'Camel']
-situations = [
-    'trying out for a Broadway musical',
-    'building a raft to escape a deserted island',
-    'flying a rickety spaceship that is in danger of being sucked into a black hole'
-]
+# For unit testing, we can simply load a previously-generated Completion
+# response from a test file. This is the default behavior. To enable AI
+# (i.e., calls to the Open AI API), set this env var to True.
+ENABLE_AI=(os.getenv('STORY_ENABLE_AI', 'False') == 'True')
 
-# Genres taken from https://www.cde.ca.gov/ci/cr/rl/litrlgenres.asp
-genres = [
-    'Drama', 'Fable', 'Fairy Tale', 'Fantasy', 'Fiction', 'Fiction in Verse',
-    'Folklore', 'Historical Fiction', 'Horror', 'Humor', 'Legend', 'Mystery',
-    'Mythology', 'Poetry', 'Realistic Fiction', 'Science Fiction', 'Short Story',
-    'Tall Tale'
-]
+OPENAI_MODEL='text-davinci-003'
+OPENAI_TEMP=0.6
 
-pages = [
-    Page('Once upon a time, in a faraway land, there was a beautiful princess named Cinderella. She lived with her wicked stepmother and stepsisters, who made her do all the hard work around the house.', 'storybook.png'),
-    Page('One day, the royal castle announced that it was holding a ball and inviting all the eligible young ladies in the kingdom to attend. Cinderella''s stepsisters were thrilled, but Cinderella was sad because she knew she had no way of going to the ball.', 'storybook.png'),
-    Page('The End', 'storybook.png')
-    ]
-story = Story('My Story', pages)
-
-# for page in story.pages:
-#     print(f"{page.text}, {page.illustration}")
 
 app = Flask(__name__)
 app.secret_key = str(uuid.uuid4())
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -55,17 +39,19 @@ def index():
 
 @app.route("/story", methods=["GET"])
 def storypage():
-    try:
-        pagenum_arg = int(request.args.get("pagenum"))
-        pagenum = pagenum_arg if pagenum_arg in range(0, len(story.pages)) else 0
-    except:
-        pagenum = 0
-    
     story_to_render = Story()
-    if 'story' in session:
+    if 'story' not in session:
+        return redirect(url_for("index"))
+    else:
         story_to_render.__dict__ = json.loads(session['story'])
 
-    return render_template("story.html", story=story_to_render, pagenum=pagenum)
+        try:
+            pagenum_arg = int(request.args.get("pagenum"))
+            pagenum = pagenum_arg if pagenum_arg in range(0, len(story_to_render.pages)) else 0
+        except:
+            pagenum = 0
+        
+        return render_template("story.html", story=story_to_render, pagenum=pagenum)
 
 
 @app.route("/story", methods=["POST"])
@@ -78,17 +64,38 @@ def post_storypage():
     print(f'animals={story_params.animals}; '
         f'situation={story_params.situation}; '
         f'genre={story_params.genre}')
-
-    # response = openai.Completion.create(
-    #     model="text-davinci-002",
-    #     prompt=generate_prompt(animal),
-    #     temperature=0.6,
-    # )
-
+    
+    story = generate_story(story_params)
     session['story'] = to_json(story)
-    # print(json.dumps(story.__dict__, default=lambda o: o.__dict__, indent=True))
 
     return redirect(url_for("storypage", pagenum=0))
+
+
+"""
+Generate a new story from the given parameters.
+"""
+def generate_story(story_params) -> Story:
+    story_prompt = generate_prompt(story_params)
+    print('PROMPT')
+    print(story_prompt)
+
+    if ENABLE_AI:
+        response = openai.Completion.create(
+            model=OPENAI_MODEL,
+            prompt=story_prompt,
+            temperature=OPENAI_TEMP,
+            max_tokens=400,
+        )
+        print("RESULT")
+        print(to_json(response))
+        story_text = response.choices[0].text
+    else:
+        story_text = load_story_text('test/testresponse.json')
+
+    print("STORY TEXT")
+    print(story_text)
+
+    return Story.parse(story_text)
 
 
 def get_story_gen_params():
@@ -117,17 +124,41 @@ def get_story_gen_params():
     return StoryGenerationParams(animals, situation, genre), errors
 
 
-# def generate_prompt(animal):
-#     return """Suggest three names for an animal that is a superhero.
+"""
+Generate an Open AI prompt to generate a new story.
+"""
+def generate_prompt(story_params: StoryGenerationParams):  # """.format(", ".join(story_params.animals))
+    return """Generate a childrens story involving these animals: {}. 
 
-# Animal: Cat
-# Names: Captain Sharpclaw, Agent Fluffball, The Incredible Feline
-# Animal: Dog
-# Names: Ruff the Protector, Wonder Canine, Sir Barks-a-Lot
-# Animal: {}
-# Names:""".format(
-#         animal.capitalize()
-#     )
+The animals are {}. The story should be written in the genre of "{}".
 
+Generate a title on the first line (with no other text) and divide the story
+into multiple pages, each with a header of the form "Page N".
+
+""".format(
+        ", ".join(story_params.animals),
+        story_params.situation,
+        story_params.genre
+    )
+
+
+"""
+Used during development only!
+"""
+def load_story_text(response_file):
+    response = None
+    with open(response_file, 'r') as f:
+        response = json.load(f)
+    print('response...')
+    print(response['_previous'])
+    print(response['_previous']['choices'])
+    print(response['_previous']['choices'][0])
+    print(response['_previous']['choices'][0]['text'])
+    return response['_previous']['choices'][0]['text']
+
+
+"""
+Convert object to JSON string.
+"""
 def to_json(an_object: object):
-    return json.dumps(an_object.__dict__, default=lambda o: o.__dict__,)
+    return json.dumps(an_object.__dict__, default=lambda o: o.__dict__, indent=True)

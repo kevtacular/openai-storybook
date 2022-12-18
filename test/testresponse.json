@@ -1,0 +1,29 @@
+{
+    "_response_ms": 4697,
+    "_retrieve_params": {},
+    "api_key": "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",
+    "api_version": null,
+    "api_type": null,
+    "organization": "user-okn85gvi1qpb1tg0hkla4fyg",
+    "api_base_override": null,
+    "engine": null,
+    "_previous": {
+     "id": "cmpl-6Obo4yD40Q0L3vuLZSf6NUSvmg1e1",
+     "object": "text_completion",
+     "created": 1671323220,
+     "model": "text-davinci-003",
+     "choices": [
+      {
+       "text": "\nThe Spectacular Journey of the Hippo\nPage 1\nOnce upon a time, in a distant kingdom, there lived a hippo named Hercules. Hercules wanted to be the star of a Broadway musical, and so he set off on a journey to make his dreams come true.\n\nPage 2\nHe traveled through the kingdom, meeting other animals along the way. He encountered a tiger, a giraffe, a bear, and many other animals. They all encouraged him to pursue his dreams and wished him luck on his journey.\n\nPage 3\nHercules finally arrived at the theater and auditioned for the musical. He sang, he danced, and he put on a show like no other. The audience was mesmerized and the director was impressed. Hercules was accepted into the musical and was set to be the star!\n\nPage 4\nThe musical was a huge success and Hercules was the star of the show. People came from far and wide to watch the musical, and the story of Hercules and his journey to Broadway became legendary. He was an inspiration to all the animals in the kingdom and a reminder that dreams can come true.",
+       "index": 0,
+       "logprobs": null,
+       "finish_reason": "stop"
+      }
+     ],
+     "usage": {
+      "prompt_tokens": 77,
+      "completion_tokens": 233,
+      "total_tokens": 310
+     }
+    }
+   }

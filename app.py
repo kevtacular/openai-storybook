@@ -6,7 +6,7 @@ import json
 import uuid
 from flask import Flask, redirect, render_template, request, session, url_for
 from model import animals, situations, genres, StoryGenerationParams, Story
-from service import StoryService
+from generation import StoryService
 from util import to_json
 
 

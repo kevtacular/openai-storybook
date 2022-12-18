@@ -11,6 +11,7 @@ import re
 
 import openai
 
+from illustration import IllustrationService
 from model import Story, StoryGenerationParams, Page
 from util import to_json
 
@@ -43,6 +44,7 @@ class StoryService:
         """
         Create a StoryService.
         """
+        self.illustration_service = IllustrationService()
 
     def generate_story(
         self, story_params: StoryGenerationParams, temperature: float = _OPENAI_TEMP
@@ -71,7 +73,11 @@ class StoryService:
         print(story_text)
 
         title, pages = self._parse_story(story_text)
-        return Story(title, pages)
+        story = Story(title, pages)
+
+        self.illustration_service.illustrate_story(story)
+
+        return story
 
     def _generate_prompt(self, story_params: StoryGenerationParams):
         """

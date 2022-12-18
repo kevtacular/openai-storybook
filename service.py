@@ -17,11 +17,11 @@ from util import to_json
 # For unit testing, we can simply load a previously-generated Completion
 # response from a test file. This is the default behavior. To enable AI
 # (i.e., calls to the Open AI API), set this env var to True.
-_ENABLE_AI = (os.getenv('STORY_ENABLE_AI', 'False') == 'True')
+_ENABLE_AI = os.getenv("STORY_ENABLE_AI", "False") == "True"
 
-_OPENAI_MODEL = 'text-davinci-003'
+_OPENAI_MODEL = "text-davinci-003"
 _OPENAI_TEMP = 0.6
-_TEST_RESPONSE_FILE = 'test/testresponse2.json'
+_TEST_RESPONSE_FILE = "test/testresponse2.json"
 _STORY_TEXT_PROMPT = """Generate a childrens story involving these animals: {}.
 
 The animals are {}. The story should be written in the genre of "{}".
@@ -31,7 +31,7 @@ into multiple pages, each with a header of the form "Page N".
 """
 
 # Set the key used to access the Open AI API
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class StoryService:
@@ -44,12 +44,14 @@ class StoryService:
         Create a StoryService.
         """
 
-    def generate_story(self, story_params: StoryGenerationParams, temperature: float = _OPENAI_TEMP) -> Story:
+    def generate_story(
+        self, story_params: StoryGenerationParams, temperature: float = _OPENAI_TEMP
+    ) -> Story:
         """
         Generate a new story from the given parameters.
         """
         story_prompt = self._generate_prompt(story_params)
-        print('PROMPT')
+        print("PROMPT")
         print(story_prompt)
 
         if _ENABLE_AI:
@@ -76,9 +78,7 @@ class StoryService:
         Generate an Open AI prompt to generate a new story.
         """
         return _STORY_TEXT_PROMPT.format(
-            ", ".join(story_params.animals),
-            story_params.situation,
-            story_params.genre
+            ", ".join(story_params.animals), story_params.situation, story_params.genre
         )
 
     def _load_story_text(self, response_file) -> str:
@@ -86,9 +86,9 @@ class StoryService:
         Used during development only!
         """
         response = None
-        with open(response_file, 'r', encoding="utf-8") as file:
+        with open(response_file, "r", encoding="utf-8") as file:
             response = json.load(file)
-        return response['_previous']['choices'][0]['text']
+        return response["_previous"]["choices"][0]["text"]
 
     def _parse_story(self, story_text):
         """
@@ -96,19 +96,19 @@ class StoryService:
         """
         story_lines = story_text.splitlines()
 
-        title = ''
+        title = ""
         while not title:
             title = story_lines[0]
             story_lines = story_lines[1:]
 
         pages = []
         page = None
-        page_regex = re.compile(r'Page \d+')
+        page_regex = re.compile(r"Page \d+")
         for line in story_lines:
             if page_regex.match(line):
-                page = Page('', 'storybook.png')
+                page = Page("", "storybook.png")
                 pages.append(page)
             elif page:
-                page.text = page.text + line + '\n'
+                page.text = page.text + line + "\n"
 
         return (title, pages)

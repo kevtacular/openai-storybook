@@ -1,5 +1,3 @@
-import re
-
 animals = ['Horse', 'Hippo', 'Camel']
 situations = [
     'trying out for a Broadway musical',
@@ -40,24 +38,3 @@ class Story:
     def __init__(self, title='Empty Story', pages=[Page('Once upon a time...', 'storybook.png')]) -> None:
         self.title = title
         self.pages = pages
-
-    @classmethod
-    def parse(cls, story_text):
-        story_lines = story_text.splitlines()
-
-        title = ''
-        while not title:
-            title = story_lines[0]
-            story_lines = story_lines[1:]
-
-        pages = []
-        page = None
-        page_regex = re.compile(r'Page \d+')
-        for i in range(len(story_lines)):
-            if page_regex.match(story_lines[i]):
-                page = Page('', 'storybook.png')
-                pages.append(page)
-            elif page:
-                page.text = page.text + story_lines[i] + '\n'
-
-        return Story(title, pages)

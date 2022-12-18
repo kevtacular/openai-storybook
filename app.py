@@ -48,7 +48,7 @@ def storypage():
 
 @app.route("/story", methods=["POST"])
 def post_storypage():
-    story_params, errors = get_story_gen_params()
+    story_params, errors = _get_story_gen_params()
     session['story_params'] = to_json(story_params)
     if len(errors) > 0:
         return redirect(url_for("index", errs=errors))
@@ -63,7 +63,7 @@ def post_storypage():
     return redirect(url_for("storypage", pagenum=0))
 
 
-def get_story_gen_params():
+def _get_story_gen_params():
     animals = []
     situation = ''
     genre = ''

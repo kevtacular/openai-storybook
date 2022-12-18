@@ -1,7 +1,8 @@
 import json
 import openai
 import os
-from model import Story, StoryGenerationParams
+import re
+from model import Story, StoryGenerationParams, Page
 from util import to_json
 
 # For unit testing, we can simply load a previously-generated Completion
@@ -47,7 +48,7 @@ class StoryService:
         print("STORY TEXT")
         print(story_text)
 
-        return Story.parse(story_text)
+        return self._parse_story(story_text)
 
     """
     Generate an Open AI prompt to generate a new story.
@@ -69,8 +70,31 @@ into multiple pages, each with a header of the form "Page N".
     """
     Used during development only!
     """
-    def _load_story_text(self, response_file):
+    def _load_story_text(self, response_file) -> str:
         response = None
         with open(response_file, 'r') as f:
             response = json.load(f)
         return response['_previous']['choices'][0]['text']
+
+    """
+    Parse a Completion response into a Story.
+    """
+    def _parse_story(self, story_text) -> Story:
+        story_lines = story_text.splitlines()
+
+        title = ''
+        while not title:
+            title = story_lines[0]
+            story_lines = story_lines[1:]
+
+        pages = []
+        page = None
+        page_regex = re.compile(r'Page \d+')
+        for i in range(len(story_lines)):
+            if page_regex.match(story_lines[i]):
+                page = Page('', 'storybook.png')
+                pages.append(page)
+            elif page:
+                page.text = page.text + story_lines[i] + '\n'
+
+        return Story(title, pages)

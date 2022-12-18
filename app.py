@@ -1,23 +1,15 @@
-import os
-
 import json
-import openai
 import uuid
 from flask import Flask, redirect, render_template, request, session, url_for
 from model import animals, situations, genres, StoryGenerationParams, Story
-
-# For unit testing, we can simply load a previously-generated Completion
-# response from a test file. This is the default behavior. To enable AI
-# (i.e., calls to the Open AI API), set this env var to True.
-ENABLE_AI=(os.getenv('STORY_ENABLE_AI', 'False') == 'True')
-
-OPENAI_MODEL='text-davinci-003'
-OPENAI_TEMP=0.6
+from service import StoryService
+from util import to_json
 
 
 app = Flask(__name__)
 app.secret_key = str(uuid.uuid4())
-openai.api_key = os.getenv('OPENAI_API_KEY')
+
+story_service = StoryService()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -65,37 +57,10 @@ def post_storypage():
         f'situation={story_params.situation}; '
         f'genre={story_params.genre}')
     
-    story = generate_story(story_params)
+    story = story_service.generate_story(story_params)
     session['story'] = to_json(story)
 
     return redirect(url_for("storypage", pagenum=0))
-
-
-"""
-Generate a new story from the given parameters.
-"""
-def generate_story(story_params) -> Story:
-    story_prompt = generate_prompt(story_params)
-    print('PROMPT')
-    print(story_prompt)
-
-    if ENABLE_AI:
-        response = openai.Completion.create(
-            model=OPENAI_MODEL,
-            prompt=story_prompt,
-            temperature=OPENAI_TEMP,
-            max_tokens=400,
-        )
-        print("RESULT")
-        print(to_json(response))
-        story_text = response.choices[0].text
-    else:
-        story_text = load_story_text('test/testresponse.json')
-
-    print("STORY TEXT")
-    print(story_text)
-
-    return Story.parse(story_text)
 
 
 def get_story_gen_params():
@@ -122,43 +87,3 @@ def get_story_gen_params():
     print(errors)
 
     return StoryGenerationParams(animals, situation, genre), errors
-
-
-"""
-Generate an Open AI prompt to generate a new story.
-"""
-def generate_prompt(story_params: StoryGenerationParams):  # """.format(", ".join(story_params.animals))
-    return """Generate a childrens story involving these animals: {}. 
-
-The animals are {}. The story should be written in the genre of "{}".
-
-Generate a title on the first line (with no other text) and divide the story
-into multiple pages, each with a header of the form "Page N".
-
-""".format(
-        ", ".join(story_params.animals),
-        story_params.situation,
-        story_params.genre
-    )
-
-
-"""
-Used during development only!
-"""
-def load_story_text(response_file):
-    response = None
-    with open(response_file, 'r') as f:
-        response = json.load(f)
-    print('response...')
-    print(response['_previous'])
-    print(response['_previous']['choices'])
-    print(response['_previous']['choices'][0])
-    print(response['_previous']['choices'][0]['text'])
-    return response['_previous']['choices'][0]['text']
-
-
-"""
-Convert object to JSON string.
-"""
-def to_json(an_object: object):
-    return json.dumps(an_object.__dict__, default=lambda o: o.__dict__, indent=True)

@@ -1,7 +1,16 @@
+"""
+Create children's stories using Open AI APIs.
+
+Classes:
+
+    StoryService
+"""
 import json
-import openai
 import os
 import re
+
+import openai
+
 from model import Story, StoryGenerationParams, Page
 from util import to_json
 
@@ -13,7 +22,7 @@ _ENABLE_AI = (os.getenv('STORY_ENABLE_AI', 'False') == 'True')
 _OPENAI_MODEL = 'text-davinci-003'
 _OPENAI_TEMP = 0.6
 _TEST_RESPONSE_FILE = 'test/testresponse2.json'
-_STORY_TEXT_PROMPT = """Generate a childrens story involving these animals: {}. 
+_STORY_TEXT_PROMPT = """Generate a childrens story involving these animals: {}.
 
 The animals are {}. The story should be written in the genre of "{}".
 
@@ -25,18 +34,20 @@ into multiple pages, each with a header of the form "Page N".
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
-"""
-A service for generating children's stories using the Open AI API.
-"""
 class StoryService:
+    """
+    A service for generating children's stories using the Open AI API.
+    """
 
     def __init__(self) -> None:
-        pass
+        """
+        Create a StoryService.
+        """
 
-    """
-    Generate a new story from the given parameters.
-    """
     def generate_story(self, story_params: StoryGenerationParams, temperature: float = _OPENAI_TEMP) -> Story:
+        """
+        Generate a new story from the given parameters.
+        """
         story_prompt = self._generate_prompt(story_params)
         print('PROMPT')
         print(story_prompt)
@@ -60,29 +71,29 @@ class StoryService:
         title, pages = self._parse_story(story_text)
         return Story(title, pages)
 
-    """
-    Generate an Open AI prompt to generate a new story.
-    """
     def _generate_prompt(self, story_params: StoryGenerationParams):
+        """
+        Generate an Open AI prompt to generate a new story.
+        """
         return _STORY_TEXT_PROMPT.format(
             ", ".join(story_params.animals),
             story_params.situation,
             story_params.genre
         )
 
-    """
-    Used during development only!
-    """
     def _load_story_text(self, response_file) -> str:
+        """
+        Used during development only!
+        """
         response = None
-        with open(response_file, 'r') as f:
-            response = json.load(f)
+        with open(response_file, 'r', encoding="utf-8") as file:
+            response = json.load(file)
         return response['_previous']['choices'][0]['text']
 
-    """
-    Parse a Completion response into a Story.
-    """
     def _parse_story(self, story_text):
+        """
+        Parse a Completion response into a Story.
+        """
         story_lines = story_text.splitlines()
 
         title = ''
@@ -93,11 +104,11 @@ class StoryService:
         pages = []
         page = None
         page_regex = re.compile(r'Page \d+')
-        for i in range(len(story_lines)):
-            if page_regex.match(story_lines[i]):
+        for line in story_lines:
+            if page_regex.match(line):
                 page = Page('', 'storybook.png')
                 pages.append(page)
             elif page:
-                page.text = page.text + story_lines[i] + '\n'
+                page.text = page.text + line + '\n'
 
         return (title, pages)

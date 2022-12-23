@@ -169,15 +169,3 @@ class Story:
         Returns a Snippet consisting of all text in this Story.
         """
         return Snippet(self.story_lines)
-
-    # def chapter_count(self):
-    #     """
-    #     TODO Return the number of chapters.
-    #     """
-    #     return 1
-
-    # def chapter_len(self, chapter_num: int) -> int:
-    #     """
-    #     TODO Return the length of the given chapter (in characters).
-    #     """
-    #     return 1

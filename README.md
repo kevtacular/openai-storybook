@@ -1,6 +1,12 @@
-# OpenAI API Quickstart - Python example app
+# OpenAI Storybook - A sample OpenAI app in Python
 
-This is an example pet name generator app used in the OpenAI API [quickstart tutorial](https://beta.openai.com/docs/quickstart). It uses the [Flask](https://flask.palletsprojects.com/en/2.0.x/) web framework. Check out the tutorial or follow the instructions below to get set up.
+This is a basic children's story generation app implemented using Python and
+[Flask](https://flask.palletsprojects.com/en/2.0.x/). The app allows you to
+select the characters, situation, and literary genre for a story to be
+generated. Once the parameters are selected, a story is generated using the
+`openai.Completion` API and illustrated using the `openai.Image` API.
+
+Follow the instructions below to set up and run the app.
 
 ## Setup
 
@@ -11,7 +17,7 @@ This is an example pet name generator app used in the OpenAI API [quickstart tut
 3. Navigate into the project directory
 
    ```bash
-   $ cd openai-quickstart-python
+   $ cd openai-storybook
    ```
 
 4. Create a new virtual environment
@@ -33,7 +39,8 @@ This is an example pet name generator app used in the OpenAI API [quickstart tut
    $ cp .env.example .env
    ```
 
-7. Add your [API key](https://beta.openai.com/account/api-keys) to the newly created `.env` file
+7. Add your OpenAI [API key](https://beta.openai.com/account/api-keys) to the
+newly created `.env` file
 
 8. Run the app
 
@@ -41,4 +48,7 @@ This is an example pet name generator app used in the OpenAI API [quickstart tut
    $ flask run
    ```
 
-You should now be able to access the app at [http://localhost:5000](http://localhost:5000)! For the full context behind this example app, check out the [tutorial](https://beta.openai.com/docs/quickstart).
+You should now be able to access the app at [http://localhost:5000](http://localhost:5000)!
+
+For more context behind this example app, check out the OpenAI quick start
+[tutorial](https://beta.openai.com/docs/quickstart).

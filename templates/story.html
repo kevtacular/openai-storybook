@@ -27,7 +27,7 @@
         <p>{{story.pages[pagenum].text}}</p>
       </div>
       <div class="illustration">
-        <img src="{{ url_for('static', filename=story.pages[pagenum].illustration) }}" alt="Illustration">
+        <img src="{{ story.pages[pagenum].illustration }}" alt="Illustration">
       </div>
     </div>
     <div class="storybook-footer">

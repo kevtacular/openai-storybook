@@ -72,8 +72,8 @@ class StoryService:
         print("STORY TEXT")
         print(story_text)
 
-        title, pages = self._parse_story(story_text)
-        story = Story(title, pages)
+        title, pages, text = self._parse_story(story_text)
+        story = Story(title, pages, text)
 
         self.illustration_service.illustrate_story(story)
 
@@ -117,4 +117,4 @@ class StoryService:
             elif page:
                 page.text = page.text + line + "\n"
 
-        return (title, pages)
+        return (title, pages, story_lines)

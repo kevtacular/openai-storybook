@@ -2,7 +2,7 @@ body {
   font-family: "Helvetica Neue", sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f1ecec;
+  background-color: #f2f2f2;
 }
 
 .storybook {
@@ -12,8 +12,8 @@ body {
   width: 800px;
   margin: auto;
   padding: 40px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 
 .storybook-header {
@@ -33,12 +33,13 @@ body {
 }
 
 .story-text {
+  font-family: "Palatino Linotype", serif;
   font-size: 18px;
   line-height: 24px;
   padding: 0 20px;
   text-align: left;
   width: 60%;
-  color: #333;
+  color: #333333;
 }
 
 .illustration {
@@ -78,18 +79,21 @@ img {
 }
 
 h1 {
+  font-family: "Palatino Linotype", serif;
   font-size: 36px;
   text-align: left;
-  color: #333;
-  text-shadow: 1px 1px 1px #ccc;
-  padding: 0 20px;
+  color: #333333;
+  margin: 0 20px;
 }
 
 p {
+
+  font-family: "Palatino Linotype", serif;
   font-size: 18px;
   line-height: 24px;
+  text-align: left;
+  color: #333333;
   margin: 10px 0;
-  color: #333;
 }
 
 

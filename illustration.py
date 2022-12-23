@@ -1,11 +1,14 @@
 """
 Illustration of Stories using the Open AI DALL-E API.
 """
+import os
+
 import openai
 
 from model import Story
 from util import to_json
 
+_IMAGE_ENABLE_AI = os.getenv("IMAGE_ENABLE_AI", "False") == "True"
 _MAX_PROMPT_LEN = 1000
 _STORY_IMAGE_PROMPT = """An illustration of page {} of the following children's story:
 Title: {}
@@ -26,19 +29,22 @@ class IllustrationService:
         for pagenum, page in enumerate(story.pages):
             print(f"IMAGE - PG {pagenum}")
 
-            prompt = self._create_image_prompt(story, pagenum)
+            if _IMAGE_ENABLE_AI:
+                prompt = self._create_image_prompt(story, pagenum)
 
-            response = openai.Image.create(
-                prompt=prompt,
-                n=1,
-                size="256x256",
-            )
+                response = openai.Image.create(
+                    prompt=prompt,
+                    n=1,
+                    size="256x256",
+                )
 
-            print(to_json(response))
+                print(to_json(response))
 
-            image_url = response["data"][0]["url"]
-            print(f"image_url = {image_url}")
-            page.illustration = image_url
+                image_url = response["data"][0]["url"]
+                print(f"image_url = {image_url}")
+                page.illustration = image_url
+            else:
+                page.illustration = "static/storybook.png"
 
     def _create_image_prompt(self, story: Story, pagenum: int) -> str:
         """

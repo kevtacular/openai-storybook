@@ -6,6 +6,17 @@
     href="{{ url_for('static', filename='storybook.png') }}"
   />
   <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
+  <script lang="javascript">
+    function submitForm() {
+      const storyForm = document.getElementById('storyForm');
+      const loader = document.getElementById('loader');
+      
+      storyForm.style.display = 'none';
+      loader.style.display = 'block';
+
+      setTimeout(function() { storyForm.submit(); }, 2000);
+    }
+  </script>
 </head>
 
 <body>
@@ -25,7 +36,7 @@
     </div>
     {%endif%}
   
-    <form action="/story" method="post">
+    <form id="storyForm" action="/story" method="post">
       <h3>My story...</h3>
 
       <!-- animals -->
@@ -61,7 +72,13 @@
         {%endfor%}
       </fieldset>
 
-      <input type="submit" value="Generate" />
+      <input type="button" value="Generate" onclick="javascript:submitForm()" />
     </form>
   </div>
+
+  <div id="loader" style="display: none;">
+    <div class="loader"></div>
+    Generating your story...
+  </div>
+
 </body>

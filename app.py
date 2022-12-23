@@ -3,12 +3,15 @@ A Flask web app for generating and viewing children's stories using Open AI
 APIs.
 """
 import json
+import os
+import time
 import uuid
 from flask import Flask, redirect, render_template, request, session, url_for
 from model import animals, situations, genres, StoryGenerationParams, Story
 from generation import StoryService
 from util import to_json
 
+_SIMULATE_GENERATION_TIME = os.getenv("SIMULATE_GENERATION_TIME", "False") == "True"
 
 app = Flask(__name__)
 app.secret_key = str(uuid.uuid4())
@@ -91,6 +94,8 @@ def post_storypage():
         situation - a situation the animals find themselves in
         genre - a literary genre in which the story is to be told
     """
+    if _SIMULATE_GENERATION_TIME:
+        time.sleep(5)
     story_params, errors = _get_story_gen_params()
     session["story_params"] = to_json(story_params)
     if len(errors) > 0:
